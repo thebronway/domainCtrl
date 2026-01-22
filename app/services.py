@@ -250,14 +250,13 @@ class CertbotService:
 
 # --- Certificate Monitor Service ---
 class CertificateMonitor:
-    """Reads certificate files from disk to check expiration."""
+    """Reads certificate files from disk to check details."""
 
-    def get_cert_expiration_date(self, domain_key):
+    def _get_cert_object(self, domain_key):
+        """Helper to find and load the cert object."""
         live_dir = f"/certs/{domain_key}/live/"
         
-        # DEBUG: Check if main dir exists
         if not os.path.isdir(live_dir):
-            logger.warning(f"[{domain_key}] SSL Monitor: Directory not found at {live_dir}")
             return None
         
         cert_path = None
@@ -265,29 +264,42 @@ class CertificateMonitor:
             # Look for subdirectories (Certbot creates symlink folders inside live)
             subdirs = [d for d in os.listdir(live_dir) if os.path.isdir(os.path.join(live_dir, d))]
             
+            # If no subdirs, check the live root (just in case)
             if not subdirs:
-                logger.warning(f"[{domain_key}] SSL Monitor: No subdirectories found in {live_dir}")
-                
-            for subdir in subdirs:
-                potential_path = os.path.join(live_dir, subdir, "fullchain.pem")
-                if os.path.exists(potential_path):
-                    cert_path = potential_path
-                    break
+                if os.path.exists(os.path.join(live_dir, "fullchain.pem")):
+                    cert_path = os.path.join(live_dir, "fullchain.pem")
+            else:
+                for subdir in subdirs:
+                    potential_path = os.path.join(live_dir, subdir, "fullchain.pem")
+                    if os.path.exists(potential_path):
+                        cert_path = potential_path
+                        break
             
             if not cert_path:
-                logger.warning(f"[{domain_key}] SSL Monitor: fullchain.pem not found in any subdir of {live_dir}")
                 return None
 
-            # Attempt to read the file
             with open(cert_path, 'rb') as f:
                 cert_data = f.read()
             
-            cert = cryptography.x509.load_pem_x509_certificate(cert_data, default_backend())
-            
-            # Convert to User Timezone
-            tz = get_user_timezone()
-            return cert.not_valid_after_utc.astimezone(tz)
+            return cryptography.x509.load_pem_x509_certificate(cert_data, default_backend())
             
         except Exception as e:
-            logger.error(f"[{domain_key}] SSL Monitor Error reading {cert_path}: {e}")
+            logger.error(f"[{domain_key}] SSL Monitor Error: {e}")
             return None
+
+    def get_cert_dates(self, domain_key):
+        """Returns a dict with 'issued' and 'expires' datetime objects."""
+        cert = self._get_cert_object(domain_key)
+        if not cert:
+            return None
+            
+        tz = get_user_timezone()
+        return {
+            "issued": cert.not_valid_before_utc.astimezone(tz),
+            "expires": cert.not_valid_after_utc.astimezone(tz)
+        }
+
+    def get_cert_expiration_date(self, domain_key):
+        """Legacy wrapper for backward compatibility."""
+        dates = self.get_cert_dates(domain_key)
+        return dates['expires'] if dates else None

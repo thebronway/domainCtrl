@@ -58,10 +58,11 @@ def get_next_run_time(job_func_name):
         # 2. Mark the scheduler's time as System Time
         next_run_aware = next_run_naive.replace(tzinfo=system_tz)
         
-        # 3. Convert to User's Configured Timezone for display
+        # 3. Convert to User's Configured Timezone
         local_time = next_run_aware.astimezone(tz)
         
-        return local_time.strftime("%Y-%m-%d %H:%M:%S %Z")
+        # RETURN THE OBJECT (Not a string) so templates can format it
+        return local_time
 
     except Exception as e:
         logger.error(f"Error getting next run time for {job_func_name}: {e}")

@@ -341,10 +341,11 @@ def _run_ssl_check_thread():
                                 f"SSL certificate for {domain_name} was successfully renewed.\n\nOutput:\n{output}"
                             )
                 
-                logger.info(f"[{domain_name}] Re-checking SSL expiration date after renewal.")
-                expiry_date = cert_monitor.get_cert_expiration_date(domain_name)
-                if domain_name in app_state['domain_states']:
-                    app_state['domain_states'][domain_name]['ssl_expiration'] = expiry_date
+                logger.info(f"[{domain_name}] Re-reading certificate dates from disk...")
+                cert_dates = cert_monitor.get_cert_dates(domain_name)
+                if cert_dates and domain_name in app_state['domain_states']:
+                    app_state['domain_states'][domain_name]['ssl_expiration'] = cert_dates['expires']
+                    app_state['domain_states'][domain_name]['ssl_last_renew'] = cert_dates['issued']
             
             save_state()
             
@@ -463,16 +464,18 @@ def run_initial_setup():
                 
                 existing_ssl_data = app_state.get("domain_states", {}).get(domain_name, {}).get("ssl_expiration")
                 
-                if not existing_ssl_data:
-                    expiry_date = cert_monitor.get_cert_expiration_date(domain_name)
-                    if domain_name not in app_state["domain_states"]:
-                        app_state["domain_states"][domain_name] = {}
-                    app_state['domain_states'][domain_name]['ssl_expiration'] = expiry_date
-                    
-                    if expiry_date:
-                        logger.info(f"[{domain_name}] Found existing certificate. Expires: {expiry_date.strftime('%Y-%m-%d')}")
-                    else:
-                        logger.warning(f"[{domain_name}] Certificate not found. A user must create it manually.")
+                # Always refresh from disk on startup to ensure "Last Renew" (Issued Date) is correct
+                cert_dates = cert_monitor.get_cert_dates(domain_name)
+                
+                if domain_name not in app_state["domain_states"]:
+                    app_state["domain_states"][domain_name] = {}
+
+                if cert_dates:
+                    app_state['domain_states'][domain_name]['ssl_expiration'] = cert_dates['expires']
+                    app_state['domain_states'][domain_name]['ssl_last_renew'] = cert_dates['issued']
+                    logger.info(f"[{domain_name}] Loaded cert. Issued: {cert_dates['issued'].strftime('%Y-%m-%d')}, Expires: {cert_dates['expires'].strftime('%Y-%m-%d')}")
+                else:
+                    logger.warning(f"[{domain_name}] Certificate not found on disk.")
                 
         logger.info("Initial setup complete.")
         save_state()

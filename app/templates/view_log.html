@@ -1,30 +1,20 @@
 {% extends "_layout.html" %}
 
-{% block title %}{{ title }} - domainCtrl{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block head %}
 <style>
     /* Log Page Specific Styles */
-    .log-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-    
     .log-container {
         background-color: #1e1e1e; /* Always dark for logs */
         border: 1px solid var(--border-color);
         border-radius: 4px;
-        padding: 15px;
+        padding: 5px; /* Reduced padding to match original compact look */
         font-family: "Courier New", Courier, monospace;
         font-size: 13px;
-        line-height: 1.5;
-        white-space: pre-wrap; 
-        word-break: break-all;
         height: 70vh;
         overflow-y: auto;
-        color: #d4d4d4; /* Default light grey text */
+        color: #d4d4d4; 
     }
 
     /* Syntax Highlighting Classes */
@@ -33,38 +23,44 @@
         color: #ff6b6b;
         border-left: 3px solid #dc3545;
         padding-left: 5px;
-        margin-left: -5px; /* Offset padding */
+        margin-left: -5px; 
     }
     
-    .log-warning {
-        color: #ffc107;
-    }
+    .log-warning { color: #ffc107; }
+    .log-success { color: #28a745; }
     
-    .log-success {
-        color: #28a745;
-    }
-    
-    /* Ensure each line is a block so bg colors span width */
     .log-line {
         display: block; 
-        min-height: 1.2em;
+        line-height: 1.2; /* RESTORED: Compact line height */
+        margin: 0; /* RESTORED: No margin between lines */
+        padding: 1px 4px;
+        white-space: pre-wrap; 
+        word-break: break-all;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-    <div class="log-header">
-        <h2>{{ title }}</h2>
+    <div class="top-bar settings-top-bar force-mobile-stack">
+        <div class="top-bar-left">
+            <h1 class="page-title">{{ title|replace(' - domainCtrl', '') }}</h1>
+            
+            <div class="mobile-header-icons mobile-only">
+                <button class="theme-button theme-toggle-btn" title="Toggle dark/light mode"></button>
+            </div>
+        </div>
         
-        <div style="display: flex; gap: 10px;">
+        <div class="top-bar-right">
             {% if download_endpoint %}
-            <a href="{{ url_for(download_endpoint) }}" class="btn btn-secondary" style="display: flex; align-items: center; gap: 8px;">
-                <svg width="16" height="16"><use href="#icon-download"></use></svg>
+            <a href="{{ url_for(download_endpoint) }}" class="btn btn-secondary">
+                <svg width="16" height="16" style="margin-right: 5px;"><use href="#icon-download"></use></svg>
                 Download Full Log
             </a>
             {% endif %}
             
             <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Dashboard</a>
+            
+            <button class="theme-button theme-toggle-btn desktop-only" title="Toggle dark/light mode"></button>
         </div>
     </div>
 
@@ -77,7 +73,6 @@
     </div>
 
     <script>
-        // On page load, scroll the log box to the top (since we show newest first)
         document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('log-box').scrollTop = 0;
         });

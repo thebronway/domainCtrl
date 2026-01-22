@@ -12,7 +12,7 @@
 
 ### Try it yourself: **[Live Demo](https://domainctrl-demo.conway.im/)**
 
-**Current Version:** `v0.6`  
+**Current Version:** `v0.65`  
 **GitHub:** [thebronway/domainCtrl](https://github.com/thebronway/domainCtrl)  
 **Docker Hub:** [thebronway/domainctrl](https://hub.docker.com/r/thebronway/domainctrl)
 
@@ -27,7 +27,7 @@
 ![Settings Screenshot](./screenshots/desktop-settings-0.6.png)
 
 </details>
-
+<br>
 <details><summary><b>Mobile</b></summary>
 
 <br>
@@ -44,7 +44,7 @@
 * **Dynamic DNS (DDNS):** Automatically checks your public IP and updates DNS records if they change.
 * **SSL Management:** Wraps Certbot to handle creation and renewal of certificates using the DNS-01 challenge (Wildcard supported).
 * **Web Dashboard:** A clean, responsive UI to view the status of all your domains at a glance.
-* **Settings UI:** Configure domains, notifications, timezones, and log retention directly from the browser.
+* **Settings:** Configure domains, notifications, timezones, and log retention directly from the browser.
 * **Notifications:** Get alerts via Discord, Slack, Telegram, Email (SMTP), and more.
 * **Mobile Friendly:** Fully responsive design.
 

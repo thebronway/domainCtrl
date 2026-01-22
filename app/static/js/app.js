@@ -71,11 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetRow = document.querySelector(targetId);
             
             if (targetRow) {
-                if (targetRow.style.display === 'table-row') {
-                    targetRow.style.display = 'none';
+                if (targetRow.classList.contains('show')) {
+                    targetRow.classList.remove('show');
                     row.classList.remove('is-open');
                 } else {
-                    targetRow.style.display = 'table-row';
+                    targetRow.classList.add('show');
                     row.classList.add('is-open');
                 }
             }

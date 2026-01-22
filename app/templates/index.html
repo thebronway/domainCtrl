@@ -75,14 +75,36 @@
             </div>
 
             <div class="summary-right">
-                <div><strong>Next IP Check:</strong> {{ next_ddns_run }}</div>
-                <div><strong>Next SSL Check:</strong> {{ next_ssl_run }}</div>
+                <div>
+                    <strong>Next IP Check:</strong> 
+                    {% if next_ddns_run.strftime is defined %}
+                        <span class="desktop-only">{{ next_ddns_run.strftime('%Y-%m-%d %H:%M:%S %Z') }}</span>
+                        <span class="mobile-only">{{ next_ddns_run.strftime('%y-%m-%d %H:%M:%S %Z') }}</span>
+                    {% else %}
+                        {{ next_ddns_run }}
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <strong>Next SSL Check:</strong>
+                    {% if next_ssl_run.strftime is defined %}
+                        <span class="desktop-only">{{ next_ssl_run.strftime('%Y-%m-%d %H:%M:%S %Z') }}</span>
+                        <span class="mobile-only">{{ next_ssl_run.strftime('%y-%m-%d %H:%M:%S %Z') }}</span>
+                    {% else %}
+                        {{ next_ssl_run }}
+                    {% endif %}
+                </div>
 
                 {% if summary.next_cert_domain %}
                 <div>
-                    <strong>Next SSL Cert Expiration:</strong> 
+                    <strong>
+                        <span class="desktop-only">Next SSL Cert Expiration:</span>
+                        <span class="mobile-only">Next SSL Cert Exp:</span>
+                    </strong> 
                     <span class="domain-text">{{ summary.next_cert_domain }}</span> 
-                    on {{ summary.next_cert_date.strftime('%Y-%m-%d') }}
+                    on 
+                    <span class="desktop-only">{{ summary.next_cert_date.strftime('%Y-%m-%d') }}</span>
+                    <span class="mobile-only">{{ summary.next_cert_date.strftime('%y-%m-%d') }}</span>
                 </div>
                 {% endif %}
 
@@ -120,7 +142,11 @@
                 </th>
                 <th>DDNS Status <span class="sort-icon" data-sort-key="ddns-status"></span></th>
                 {% if ssl_enabled %}
-                <th>SSL Expiration <span class="sort-icon" data-sort-key="ssl-expire"></span></th>
+                <th>
+                    <span class="desktop-only">SSL Expiration</span>
+                    <span class="mobile-only">SSL Expiration</span>
+                    <span class="sort-icon" data-sort-key="ssl-expire"></span>
+                </th>
                 {% endif %}
                 <th>Logs</th>
             </tr>
@@ -167,7 +193,8 @@
                         {% if ssl_enabled %}
                         <td data-label="SSL Expiration">
                             {% if domain_ssl_enabled and state.get('ssl_expiration') %}
-                                {{ state.ssl_expiration.strftime('%Y-%m-%d') }}
+                                <span class="desktop-only">{{ state.ssl_expiration.strftime('%Y-%m-%d') }}</span>
+                                <span class="mobile-only">{{ state.ssl_expiration.strftime('%y-%m-%d') }}</span>
                             {% elif domain_ssl_enabled %}
                                 <span class="status-indicator status-mismatch">Missing</span>
                             {% else %}
@@ -221,21 +248,30 @@
                                 
                                 {% if ddns_enabled %}
                                 <form action="{{ url_for('trigger_force_update_ip', domain_name=domain_name) }}" method="POST" style="display: inline;">
-                                    <button type="submit" class="btn btn-secondary" {{ 'disabled' if demo_mode }}>Update IP Manually</button>
+                                    <button type="submit" class="btn btn-secondary" {{ 'disabled' if demo_mode }}>
+                                        <span class="desktop-only">Update IP Manually</span>
+                                        <span class="mobile-only">Update IP</span>
+                                    </button>
                                 </form>
                                 {% endif %}
                                 
                                 {% if ssl_enabled and domain_ssl_enabled %}
                                     {% if state.get('ssl_expiration') %}
                                         <form action="{{ url_for('trigger_ssl') }}" method="POST" style="display: inline;">
-                                            <button type="submit" class="btn btn-secondary" {{ 'disabled' if demo_mode }}>Renew Cert Manually</button>
+                                            <button type="submit" class="btn btn-secondary" {{ 'disabled' if demo_mode }}>
+                                                <span class="desktop-only">Renew Cert Manually</span>
+                                                <span class="mobile-only">Renew Cert</span>
+                                            </button>
                                         </form>
                                     {% else %}
                                         <form action="{{ url_for('trigger_create_cert', domain_name=domain_name) }}" 
                                               method="POST" 
                                               style="display: inline;"
                                               onsubmit="showLoadingOverlay({{ demo_mode | tojson }})"> 
-                                            <button type="submit" class="btn btn-primary" {{ 'disabled' if demo_mode }}>Create Cert Manually</button>
+                                            <button type="submit" class="btn btn-primary" {{ 'disabled' if demo_mode }}>
+                                                <span class="desktop-only">Create Cert Manually</span>
+                                                <span class="mobile-only">Create Cert</span>
+                                            </button>
                                         </form>
                                     {% endif %}
                                 {% endif %}
