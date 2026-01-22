@@ -182,3 +182,10 @@ class Config:
         
     def get_domains(self):
         return self.settings.get('domains', [])
+    
+    def get_env_compat(self, keys):
+        """Helper to check multiple env vars (backward compatibility)"""
+        for key in keys:
+            val = os.environ.get(key)
+            if val: return val
+        return None

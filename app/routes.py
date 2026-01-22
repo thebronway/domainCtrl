@@ -13,7 +13,7 @@ from app.scheduler import (
     app_state, 
     cert_service,
     cert_monitor,
-    r53_service,
+    dns_provider, # <--- Updated: Was r53_service
     run_ddns_update, 
     run_ssl_check, 
     save_state,
@@ -49,9 +49,17 @@ def get_next_run_time(job_func_name):
         if not next_runs:
             return "Not scheduled"
 
-        next_run_utc = min(next_runs)
-        utc_time = pytz.utc.localize(next_run_utc)
-        local_time = utc_time.astimezone(tz)
+        next_run_naive = min(next_runs)
+        
+        # 1. Determine System Timezone (Docker container's time)
+        system_now = datetime.now()
+        system_tz = system_now.astimezone().tzinfo
+        
+        # 2. Mark the scheduler's time as System Time
+        next_run_aware = next_run_naive.replace(tzinfo=system_tz)
+        
+        # 3. Convert to User's Configured Timezone for display
+        local_time = next_run_aware.astimezone(tz)
         
         return local_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
@@ -209,7 +217,7 @@ def index():
                                next_ssl_run=next_ssl_run,
                                summary=summary,
                                demo_mode=config.demo_mode,
-                               ssl_enabled=ssl_globally_enabled) # <-- This is the key addition
+                               ssl_enabled=ssl_globally_enabled)
     except Exception as e:
         logger.error(f"Error rendering dashboard: {e}")
         flash(f"An error occurred while loading the dashboard: {e}", "danger")
@@ -402,7 +410,11 @@ def trigger_create_cert(domain_name):
 
     try:
         is_wildcard = domain_config.get('ssl', {}).get('wildcard', False)
-        success, output = cert_service.create_certificate(domain_name, is_wildcard)
+        
+        # --- GENERIC CALL: Get flags from the loaded provider ---
+        certbot_flags = dns_provider.get_certbot_flags()
+        
+        success, output = cert_service.create_certificate(domain_name, is_wildcard, certbot_flags)
         
         if not success:
             flash(f"Failed to create certificate: {output}", "danger")
@@ -459,7 +471,9 @@ def trigger_refresh_ip(domain_name):
         flash("Actions are disabled in Demo Mode.", "info")
         return redirect(url_for('index'))
     try:
-        ip = r53_service.get_a_record_ip(domain_name)
+        # --- GENERIC CALL: Get Record IP ---
+        ip = dns_provider.get_record_ip(domain_name)
+        
         if domain_name not in app_state['domain_states']:
              app_state['domain_states'][domain_name] = {}
         app_state['domain_states'][domain_name]['recorded_ip'] = ip
@@ -485,7 +499,8 @@ def trigger_force_update_ip(domain_name):
             flash("Cannot update IP: Public IP is unknown.", "danger")
             return redirect(url_for('index'))
 
-        success = r53_service.update_a_record_ip(domain_name, public_ip)
+        success = dns_provider.update_record_ip(domain_name, public_ip)
+        
         if success:
             app_state['domain_states'][domain_name]['recorded_ip'] = public_ip
             app_state['domain_states'][domain_name]['last_update_time'] = get_current_time_in_tz()

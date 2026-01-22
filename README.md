@@ -1,22 +1,43 @@
 # domainCtrl
 
-A Self-Hosted, Automated DDNS & SSL Certificate Manager. 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-> **Note:** This app is nearing is in active development and should be used with caution.
-
-> **Note:** Currently domainCtrl only supports AWS Route 53 (more providers coming soon).
+### A Self-Hosted, Automated DDNS & SSL Certificate Manager.
 
 **domainCtrl** provides a simple web dashboard to monitor and manage your domain records. It automatically updates your DNS 'A' records to match your home's dynamic public IP and uses Let's Encrypt to create and renew SSL certificates for your services.
 
-**Version:** `v0.5`  
+> **Note:** domainCtrl is in active development and should be used with caution.
+
+> **Note:** domainCtrl currently only supports AWS Route 53 (more providers coming soon).
+
+### Try it yourself: **[Live Demo](https://domainctrl-demo.conway.im/)**
+
+**Current Version:** `v0.6`  
 **GitHub:** [thebronway/domainCtrl](https://github.com/thebronway/domainCtrl)  
 **Docker Hub:** [thebronway/domainctrl](https://hub.docker.com/r/thebronway/domainctrl)
 
 ## Screenshots
 
-![Dashboard Screenshot](./screenshots/dashboard-0.5.png)
+<details><summary><b>Desktop</b></summary>
 
-![Dashboard Screenshot](./screenshots/settings-0.5.png)
+<br>
+
+![Dashboard Screenshot](./screenshots/desktop-dashboard-0.6.png)
+
+![Settings Screenshot](./screenshots/desktop-settings-0.6.png)
+
+</details>
+
+<details><summary><b>Mobile</b></summary>
+
+<br>
+
+<img src="./screenshots/mobile-dashboard-0.6.png" width="300" alt="Mobile Screenshot">
+<br>
+<br>
+<img src="./screenshots/mobile-settings-0.6.png" width="300" alt="Mobile Screenshot">
+
+</details>
 
 ## Features
 
@@ -35,7 +56,7 @@ A Self-Hosted, Automated DDNS & SSL Certificate Manager.
 ## Quick Start
 
 ### 1. Prerequisites
-* A domain managed by a supported provider (currently **AWS Route 53**).
+* A domain managed by a supported provider (currently only **AWS Route 53**).
 * API credentials with permissions to modify DNS records.
 
 ### 2. Run with Docker

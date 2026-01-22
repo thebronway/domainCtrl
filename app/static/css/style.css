@@ -1,5 +1,8 @@
-/* --- 1. CSS Variables (Default: Light Mode) --- */
+/* =========================================
+   1. CSS Variables & Theme
+   ========================================= */
 :root {
+    /* Colors */
     --bg-color: #f0f2f5;
     --page-bg-color: #fbfbfb;
     --text-color: #2c3e50;
@@ -9,6 +12,8 @@
     --table-header-bg: #f8f9fa;
     --table-row-hover: #f1f1f1;
     --table-expand-bg: #fafafa;
+    
+    /* Links & Buttons */
     --link-color: #007bff;
     --link-hover-color: #0056b3;
     --button-bg: #007bff;
@@ -28,12 +33,11 @@
     --status-unknown-bg: #6c757d;
     --status-unknown-text: #ffffff;
 
-    /* New Variables for Forms */
+    /* Forms */
     --input-bg: #ffffff;
     --input-border: #ced4da;
 }
 
-/* --- 2. Dark Mode Overrides --- */
 :root.dark-mode {
     --bg-color: #181a1b;
     --page-bg-color: #242729;
@@ -52,12 +56,13 @@
     --button-secondary-bg: #5a6268;
     --button-secondary-text: #ffffff;
     --button-secondary-hover-bg: #4a5157;
-
     --input-bg: #181a1b;
     --input-border: #5a6268;
 }
 
-/* --- 3. Base Styles (using variables) --- */
+/* =========================================
+   2. Base Styles
+   ========================================= */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--bg-color);
@@ -77,7 +82,20 @@ body {
     border: 1px solid var(--border-color);
 }
 
-/* --- 4. Top Bar --- */
+.app-footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+    font-size: 0.85em;
+    color: var(--text-color-light);
+}
+
+.app-footer a { color: var(--link-color); text-decoration: none; }
+.app-footer a:hover { color: var(--link-hover-color); text-decoration: underline; }
+
+/* =========================================
+   3. Top Bar & Navigation
+   ========================================= */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -95,12 +113,6 @@ body {
     gap: 15px;
 }
 
-.top-bar-left h1 {
-    margin: 0;
-    font-size: 1.25em;
-    color: var(--header-color);
-}
-
 .top-bar-right {
     display: flex;
     align-items: center;
@@ -108,234 +120,31 @@ body {
     flex-direction: row; 
 }
 
-.scheduler-status {
-    font-size: 0.85em;
-    color: var(--text-color-light);
-    text-align: right;
-    white-space: nowrap; /* Prevent stacking on small screens */
-}
-
-/* --- 5. Actions Dropdown --- */
-.actions-dropdown {
-    position: relative;
+/* Specific Styles for Settings Header (Global) */
+.settings-top-bar h1 {
     display: inline-block;
-}
-
-.actions-dropdown-button {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 38px;
-    padding: 0 15px;
-    font-size: 14px;
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.actions-dropdown-button:hover {
-    background-color: var(--button-hover-bg);
-}
-.actions-dropdown-button:disabled {
-    background-color: var(--button-secondary-bg);
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.actions-dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: var(--page-bg-color);
-    border: 1px solid var(--border-color);
-    min-width: 220px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 4px;
-}
-
-/* Added for JS toggle */
-.actions-dropdown-content.show {
-    display: block;
-}
-
-.actions-dropdown-content form {
-    display: block;
-    margin: 0;
-}
-
-.actions-dropdown-content button {
-    color: var(--text-color);
-    background: none;
-    border: none;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.actions-dropdown-content button:hover {
-    background-color: var(--table-row-hover);
-}
-
-.actions-dropdown:focus-within .actions-dropdown-content {
-    /* display: block;  <-- Handled by JS .show class now */
-}
-
-
-/* --- 6. Flash Messages --- */
-.flash { padding: 15px; margin-bottom: 20px; border-radius: 4px; border: 1px solid transparent; }
-.flash.success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-.flash.danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-.flash.info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
-.flash.warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
-
-/* Dark mode flashes */
-:root.dark-mode .flash.success { background-color: #1a4a2a; color: #d4edda; border-color: #2a683d; }
-:root.dark-mode .flash.danger { background-color: #5a2c32; color: #f8d7da; border-color: #8a3c46; }
-:root.dark-mode .flash.info { background-color: #1c4a55; color: #d1ecf1; border-color: #2c7a8a; }
-:root.dark-mode .flash.warning { background-color: #664d03; color: #fff3cd; border-color: #997404; }
-
-/* --- 7. Theme Toggle Button --- */
-.theme-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-color-light);
-    padding: 4px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.theme-button:hover {
-    background-color: var(--table-row-hover);
-}
-.theme-button svg {
-    stroke: var(--text-color);
-}
-
-/* --- 8. Dashboard Table Styles --- */
-.domain-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-.domain-table th, .domain-table td {
-    border: 1px solid var(--border-color);
-    padding: 12px 15px;
-    text-align: left;
     vertical-align: middle;
-    white-space: nowrap;
+    margin: 0;
+    line-height: 38px;
+    font-size: 1.25em;
+    color: var(--header-color);
 }
 
-/* First column (Domain Name) can wrap */
-.domain-table th:first-child,
-.domain-table td:first-child {
-    white-space: normal;
+.settings-top-bar .top-bar-right .btn {
+    margin-right: 0 !important;
 }
 
-/* Set minimum widths for status columns */
-.domain-table th:nth-child(2),
-.domain-table td:nth-child(2),
-.domain-table th:nth-child(3),
-.domain-table td:nth-child(3) {
-    min-width: 120px; 
-}
+.brand-logo-container { display: flex; align-items: center; padding: 5px 0; }
+.brand-logo { height: 40px; width: auto; transition: opacity 0.3s ease; }
 
-/* Logs column */
-.domain-table th:nth-child(4),
-.domain-table td:nth-child(4) {
-    min-width: 60px;
-    text-align: center;
-}
+.dark-mode-logo { display: none; }
+.light-mode-logo { display: block; }
+html.dark-mode .light-mode-logo { display: none; }
+html.dark-mode .dark-mode-logo { display: block; }
 
-
-.domain-table th {
-    background-color: var(--table-header-bg);
-    font-weight: 600;
-}
-.domain-table tr.domain-row {
-    cursor: pointer;
-}
-.domain-table tr.domain-row:hover {
-    background-color: var(--table-row-hover);
-}
-
-/* Expandable row icon */
-.domain-row td:first-child::before {
-    content: '►'; /* Collapsed icon */
-    font-size: 0.7em;
-    margin-right: 8px;
-    display: inline-block;
-    transition: transform 0.2s ease-in-out;
-}
-.domain-row.is-open td:first-child::before {
-    transform: rotate(90deg); /* Expanded icon */
-}
-
-
-/* Status Indicators */
-.status-indicator {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
-.status-matched { background-color: var(--status-matched-bg); color: var(--status-matched-text); }
-.status-mismatch { background-color: var(--status-mismatch-bg); color: var(--status-mismatch-text); }
-.status-error { background-color: var(--status-error-bg); color: var(--status-error-text); }
-.status-unknown { background-color: var(--status-unknown-bg); color: var(--status-unknown-text); }
-.status-na { background-color: var(--status-unknown-bg); color: var(--status-unknown-text); }
-
-/* Expandable Row */
-.expandable-content {
-    display: none; /* Hidden by default */
-    background-color: var(--table-expand-bg);
-}
-.expandable-content td {
-    border: 0;
-    border-bottom: 1px solid var(--border-color);
-    border-top: 1px solid var(--border-color);
-    padding: 15px;
-    white-space: normal; 
-}
-.details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 20px;
-}
-.details-grid strong {
-    color: var(--text-color-light);
-}
-
-/* Refresh Icon Style */
-.refresh-icon {
-    display: inline-block;
-    margin-left: 8px;
-    text-decoration: none;
-    color: var(--link-color);
-    font-size: 1.2em;
-    font-weight: bold;
-    cursor: pointer;
-}
-.refresh-icon:hover {
-    color: var(--link-hover-color);
-    transform: rotate(90deg);
-    transition: transform 0.2s;
-}
-
-.action-buttons {
-    margin-top: 15px;
-}
-
-/* Buttons */
+/* =========================================
+   4. Buttons & Inputs
+   ========================================= */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -351,507 +160,56 @@ body {
     font-weight: bold;
     margin-right: 10px;
 }
-.btn-primary {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-}
-.btn-primary:hover {
-    background-color: var(--button-hover-bg);
-}
-.btn-secondary {
+
+.btn-primary { background-color: var(--button-bg); color: var(--button-text); }
+.btn-primary:hover { background-color: var(--button-hover-bg); }
+
+.btn-secondary { background-color: var(--button-secondary-bg); color: var(--button-secondary-text); }
+.btn-secondary:hover { background-color: var(--button-secondary-hover-bg); }
+
+.btn-success { background-color: var(--status-matched-bg); color: white; }
+.btn-success:hover { background-color: #218838; }
+
+.btn-warning { background-color: var(--status-mismatch-bg); color: #000; }
+.btn-warning:hover { background-color: #e0a800; }
+
+.btn-sm { height: auto; padding: 4px 10px; font-size: 12px; font-weight: normal; }
+
+.theme-button {
     background-color: var(--button-secondary-bg);
     color: var(--button-secondary-text);
-}
-.btn-secondary:hover {
-    background-color: var(--button-secondary-hover-bg);
-}
-
-/* Small Button (for "View" logs) */
-.btn-sm {
-    height: auto;
-    display: inline-block;
-    padding: 4px 10px;
-    font-size: 12px;
-    font-weight: normal;
-}
-/* Success Button */
-.btn-success {
-    background-color: var(--status-matched-bg);
-    color: white;
-}
-.btn-success:hover {
-    background-color: #218838;
-}
-
-/* --- 9. Loading Overlay --- */
-#loading-overlay {
-    display: none; /* Hidden by default */
-    position: fixed; /* Cover the whole screen */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: white;
-}
-#loading-overlay p {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-/* --- 10. Footer --- */
-.app-footer {
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 20px;
-    font-size: 0.85em;
-    color: var(--text-color-light);
-}
-
-.app-footer a {
-    color: var(--link-color);
-    text-decoration: none;
-}
-
-.app-footer a:hover {
-    color: var(--link-hover-color);
-    text-decoration: underline;
-}
-
-/* --- 11. Sort Icon Box --- */
-.sort-icon {
-    display: inline-block;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 2px 6px;
-    margin-left: 8px;
+    border: none;
     cursor: pointer;
-    font-family: monospace;
-    font-weight: bold;
-    min-width: 1.5em; /* Ensure width is consistent */
-    text-align: center;
-    user-select: none; /* Prevent text selection */
-    vertical-align: middle;
-}
-.sort-icon:hover {
-    background-color: var(--table-row-hover);
-    border-color: var(--link-color);
-}
-/* Default, unsorted state (uses a better up-down arrow) */
-.sort-icon::after {
-    content: '↕'; 
-    color: var(--text-color-light);
-}
-/* Sorted states (set by JS) */
-.sort-icon.asc::after {
-    content: '↑';
-    color: var(--link-color);
-}
-.sort-icon.desc::after {
-    content: '↓';
-    color: var(--link-color);
-}
-
-/* --- 12. Disabled Dropdown Button --- */
-.actions-dropdown-content button:disabled {
-    color: var(--text-color-light);
-    cursor: not-allowed;
-}
-.actions-dropdown-content button:disabled:hover {
-    background-color: transparent;
-}
-.mobile-expand-icon {
-    display: none;
-}
-
-/* --- 13. Dashboard Summary Block --- */
-.summary-section {
-    margin-bottom: 20px;
-    background-color: var(--page-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-}
-
-.summary-grid {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.summary-left {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.stat-badge {
+    padding: 0;
+    border-radius: 4px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    background-color: var(--table-expand-bg);
-    border: 1px solid var(--border-color);
-    font-size: 0.9em;
-    font-weight: 600;
-    color: var(--text-color); /* Default text color */
+    justify-content: center;
+    height: 38px;
+    width: 38px;
+    
+    /* Fix for Mobile Squashing */
+    min-width: 38px;
+    flex-shrink: 0;
+    
+    margin-left: 0;
+    transition: background-color 0.2s;
 }
+.theme-button:hover { background-color: var(--button-secondary-hover-bg); }
+.theme-button svg { stroke: currentColor; }
 
-/* Force high contrast for status badges */
-.stat-badge.status-matched {
-    background-color: var(--status-matched-bg);
-    color: #ffffff; /* White text on Green */
-    border-color: var(--status-matched-bg);
+/* Large Icon Button (Settings Page) */
+.large-theme-button {
+    height: auto; width: auto; padding: 8px 15px;
+    background-color: var(--button-secondary-bg); color: var(--button-secondary-text);
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: bold; border-radius: 4px;
+    cursor: pointer; border: none; transition: background-color 0.2s;
 }
+.large-theme-button:hover { background-color: var(--button-secondary-hover-bg); }
 
-.stat-badge.status-mismatch {
-    background-color: var(--status-mismatch-bg);
-    color: #000000; /* Black text on Yellow */
-    border-color: var(--status-mismatch-bg);
-}
-
-.summary-right {
-    text-align: right;
-    font-size: 0.9em;
-    color: var(--text-color-light);
-    line-height: 1.4;
-}
-
-/* Mobile Toggle for Summary */
-.summary-toggle {
-    display: none; /* Hidden on desktop */
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--link-color);
-    font-weight: bold;
-    padding: 10px 0;
-    cursor: pointer;
-    text-align: center;
-    /* Border and Margin removed from default state */
-}
-
-/* Only show the separator line when the summary is OPEN */
-.summary-section.is-open .summary-toggle {
-    border-top: 1px solid var(--border-color);
-    margin-top: 10px;
-}
-
-/* --- 14. Mobile Responice Styles --- */
-/* Using 768px as the breakpoint. Any screen this size or smaller will use these styles. */
-@media (max-width: 768px) {
-
-    /* --- Base --- */
-    .container {
-        margin: 0;
-        padding: 10px;
-        border-radius: 0;
-        box-shadow: none;
-        border-left: none;
-        border-right: none;
-    }
-
-    /* --- Top Bar --- */
-    .top-bar {
-        flex-direction: column; 
-        align-items: stretch;
-        gap: 15px;
-        margin-bottom: 10px; /* Reduce gap */
-    }
-
-    /* --- Summary Block Mobile --- */
-    .summary-section {
-        padding: 10px;
-    }
-    
-    .summary-grid {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        /* Hidden by default on mobile, toggled via JS or details */
-        display: none; 
-    }
-    
-    .summary-section.is-open .summary-grid {
-        display: flex;
-    }
-
-    .summary-toggle {
-        display: block; /* Show the toggle button */
-    }
-    
-    .summary-left {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .summary-right {
-        text-align: center;
-        border-top: 1px solid var(--border-color);
-        padding-top: 10px;
-    }
-    
-    .top-bar-left {
-        justify-content: center; /* Center the logo horizontally */
-        align-items: center;
-        width: 100%; /* Ensure the container spans the full width so centering works */
-    }
-    .top-bar-left h1 {
-        font-size: 1.1em;
-    }
-    
-    .top-bar-right {
-        display: flex;
-        /* MOBILE: Stack vertically, reversed so Moon is on TOP, Back is on BOTTOM */
-        flex-direction: column-reverse; 
-        gap: 10px;
-        width: 100%;
-    }
-
-    /* Moon Icon */
-    .top-bar-right .theme-button {
-        align-self: flex-end; /* Align to right */
-        margin: 0;
-    }
-
-    /* Back Button */
-    .top-bar-right .btn {
-        width: 100%;
-        text-align: center;
-        margin: 0;
-    }
-
-    /* 1. Icons: Sit side-by-side at the top */
-    .top-bar-right .theme-button {
-        order: 1;
-        width: auto;
-        margin: 0;
-    }
-
-    /* 2. Buttons: Force to new line, full width, stacked */
-    .top-bar-right .btn,
-    .top-bar-right .actions-dropdown {
-        order: 2;
-        width: 100%;
-        flex: 0 0 100%; /* Force break to new line */
-        margin-right: 0;
-        box-sizing: border-box;
-    }
-
-    /* Fix the dropdown button width specifically */
-    .top-bar-right .actions-dropdown-button {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-    
-    .scheduler-status {
-        text-align: center; /* Center the status text */
-        white-space: normal;
-        background-color: var(--bg-color);
-        padding: 10px;
-        border-radius: 4px;
-    }
-    
-    .actions-dropdown-button {
-        width: 100%;
-    }
-    
-    .theme-button {
-        align-self: flex-end; /* Put theme button on the far right */
-    }
-
-    /* --- Domain Table (Card Layout) --- */
-    
-    .domain-table thead {
-        /* Hide the desktop header */
-        display: none;
-    }
-    
-    .domain-table tr.domain-row {
-        display: block; /* Stack <td> elements */
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        margin-bottom: 15px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    
-    .domain-table td {
-        display: flex; /* Change to flex for label/value layout */
-        justify-content: space-between; /* Label on left, value on right */
-        align-items: center;
-        padding: 10px 15px;
-        text-align: right; /* Align value to the right */
-        white-space: normal; /* Allow text to wrap */
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    .domain-table td:last-child {
-        border-bottom: none; /* No border on the last item */
-    }
-    
-    .domain-table td::before {
-        /* This is the magic: Show the data-label as content */
-        content: attr(data-label);
-        font-weight: bold;
-        text-align: left;
-        padding-right: 15px;
-        color: var(--text-color-light);
-    }
-    
-    /* Make the first row (Domain Name) look like a header */
-    .domain-table td:first-child {
-        background-color: var(--table-header-bg);
-        border-radius: 4px 4px 0 0;
-        /* --- CHANGE: Align items to the left --- */
-        justify-content: flex-start; 
-        gap: 10px;
-    }
-    
-    .domain-table td:first-child strong {
-        font-size: 1.1em;
-    }
-    
-    /* Hide the "Domain" label since it's obvious */
-    .domain-table td:first-child::before {
-        display: none;
-    }
-
-    /* Show and style the new mobile icon */
-    .mobile-expand-icon {
-        display: inline-block;
-        font-size: 0.8em;
-        color: var(--text-color-light);
-        /* --- CHANGE: Move arrow to the start (left) --- */
-        order: -1; 
-        padding-left: 0;
-        padding-right: 5px;
-        transition: transform 0.2s ease-in-out;
-    }
-
-    /* Rotate the icon when the row is open */
-    .domain-row.is-open .mobile-expand-icon {
-        transform: rotate(90deg);
-    }
-    
-    /* Hide the expand/collapse arrow in the first cell */
-    .domain-row td:first-child::before {
-        display: none; 
-    }
-    
-    /* Center the "View" button in its row */
-    .domain-table td[data-label="Logs"] {
-        justify-content: center;
-    }
-    .domain-table td[data-label="Logs"]::before {
-        display: none; /* Hide the "Logs" label */
-    }
-    
-    /* --- Expandable Details --- */
-    .expandable-content td {
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        gap: 15px; /* This adds space between the text grid and the buttons */
-    }
-    
-    .details-grid {
-        grid-template-columns: 1fr; /* Stack the grid into one column */
-        gap: 12px;
-    }
-    
-    .details-grid div {
-        /* On mobile, make the details grid a flex layout too */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .action-buttons {
-        display: flex;
-        flex-direction: column; /* Stack buttons vertically */
-        gap: 10px;
-    }
-    .action-buttons form,
-    .action-buttons .btn {
-        width: 100%;
-        margin-right: 0;
-    }
-    .action-buttons .btn {
-        box-sizing: border-box; /* Ensure padding doesn't break width */
-    }
-
-}
-
-/* --- 14. New Sytles and Settings for Logs  --- */
-/* Settings Page Container */
-.settings-container {
-    padding: 0 10px;
-}
-
-/* Tabs */
-.tabs {
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 25px;
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-}
-
-.tab-link {
-    background: none;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    color: var(--text-color-light);
-    border-bottom: 3px solid transparent;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.tab-link:hover {
-    color: var(--text-color);
-}
-
-.tab-link.active {
-    color: var(--link-color);
-    border-bottom-color: var(--link-color);
-}
-
-.tab-content {
-    display: none;
-    animation: fadeEffect 0.2s;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-@keyframes fadeEffect {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-/* Form Groups */
-.form-group {
-    margin-bottom: 20px;
-}
-.form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-.form-control {
+/* Forms */
+.form-control, .search-input {
     width: 100%;
     padding: 10px;
     border: 1px solid var(--input-border);
@@ -861,551 +219,459 @@ body {
     font-size: 14px;
     box-sizing: border-box;
 }
-.form-control:focus {
-    outline: none;
-    border-color: var(--link-color);
+.form-control:focus, .search-input:focus { outline: none; border-color: var(--link-color); }
+
+.search-input {
+    height: 38px;
+    padding: 6px 12px;
+    margin-right: 10px;
+    width: 200px;
+    transition: border-color 0.2s;
 }
 
-/* Helpers */
-.help-text {
-    font-size: 0.9em;
-    color: var(--text-color-light);
-    margin-bottom: 8px;
-}
-.mb-15 { margin-bottom: 15px; }
-.mt-15 { margin-top: 15px; }
-
-/* Grid Layouts for Form */
-.grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-.row-align {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* Settings Table (Domains) */
-.settings-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-}
-.settings-table th {
-    text-align: left;
-    padding: 10px;
-    border-bottom: 2px solid var(--border-color);
-    font-weight: 600;
-    vertical-align: bottom; /* Align SSL header to bottom */
-    padding-bottom: 5px;   /* Reduce padding under main header */
-}
-
-/* Style for the sub-header row (e.g., Manage Certs, Enable Wildcard) */
-.settings-table .sub-header-row th {
-    font-size: 0.85em;
-    font-weight: 500;
-    color: var(--text-color-light);
-    border-bottom: 1px solid var(--border-color); /* Lighter border */
-    padding-top: 5px; /* Adjust padding */
-    padding-bottom: 10px;
-}
-/* Ensure the first empty th in sub-header also has a border */
-.settings-table .sub-header-row th:first-child {
-    border-bottom: 1px solid var(--border-color);
-}
-.settings-table td {
-    padding: 10px;
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
-}
-.settings-table .text-center {
-    text-align: center;
-}
-.settings-table input[type="checkbox"] {
-    transform: scale(1.2);
-    cursor: pointer;
-}
-
-/* Delete Button (X) */
-.btn-icon-danger {
-    background: none;
-    border: none;
-    color: var(--status-error-bg);
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1.2em;
-    padding: 5px;
-}
-.btn-icon-danger:hover {
-    color: #a71d2a;
-    transform: scale(1.1);
-}
-
-/* Switch / Toggle */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-}
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+/* Switches */
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--button-secondary-bg);
-    transition: .4s;
-    border-radius: 34px;
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--button-secondary-bg); transition: .4s; border-radius: 34px;
 }
 .slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background-color: white; transition: .4s; border-radius: 50%;
 }
-input:checked + .slider {
-    background-color: var(--status-matched-bg);
-}
-input:checked + .slider:before {
-    transform: translateX(20px);
-}
+input:checked + .slider { background-color: var(--status-matched-bg); }
+input:checked + .slider:before { transform: translateX(20px); }
 
-/* Sub-sections (SMTP/Webhooks) */
-.sub-section {
-    background-color: var(--table-expand-bg);
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
+/* =========================================
+   5. Dropdowns
+   ========================================= */
+/* Bulk Actions */
+.actions-dropdown { position: relative; display: inline-block; }
+.actions-dropdown-button {
+    background-color: var(--button-bg); color: var(--button-text);
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 38px; padding: 0 15px; font-size: 14px; font-weight: bold;
+    border: none; border-radius: 4px; cursor: pointer;
 }
-.alert-box {
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 0.9em;
-    margin-top: 10px;
-}
-.alert-box.info {
-    background-color: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
-    border: 1px solid rgba(23, 162, 184, 0.2);
-}
+.actions-dropdown-button:hover { background-color: var(--button-hover-bg); }
+.actions-dropdown-button:disabled { background-color: var(--button-secondary-bg); opacity: 0.6; cursor: not-allowed; }
 
-/* Webhook Rows */
-.webhook-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: var(--table-expand-bg);
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
+.actions-dropdown-content {
+    display: none; position: absolute; right: 0;
+    background-color: var(--page-bg-color); border: 1px solid var(--border-color);
+    min-width: 220px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1; border-radius: 4px;
 }
-.webhook-controls {
-    min-width: 160px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
+.actions-dropdown-content.show { display: block; }
+.actions-dropdown-content button {
+    color: var(--text-color); background: none; border: none; padding: 12px 16px;
+    text-decoration: none; display: block; width: 100%; text-align: left;
+    cursor: pointer; font-size: 14px;
 }
-.webhook-input {
-    flex-grow: 1;
-}
+.actions-dropdown-content button:hover { background-color: var(--table-row-hover); }
+.actions-dropdown-content button:disabled { color: var(--text-color-light); cursor: not-allowed; }
 
-/* Form Actions */
-.form-actions {
-    margin-top: 30px;
-    border-top: 1px solid var(--border-color);
-    padding-top: 20px;
-    text-align: right;
+/* Multi-Select (Settings) */
+.multi-select-container { position: relative; display: inline-block; width: 100%; }
+.multi-select-btn {
+    width: 100%; padding: 8px; background-color: var(--input-bg);
+    border: 1px solid var(--input-border); border-radius: 4px;
+    cursor: pointer; text-align: left; font-size: 0.9em;
+    color: var(--text-color); display: flex; justify-content: space-between; align-items: center;
 }
-.big-save-btn {
-    padding: 12px 30px;
-    font-size: 16px;
+.multi-select-btn span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; margin-right: 10px; flex-grow: 1; }
+.multi-select-btn::after { content: '▼'; font-size: 0.7em; color: var(--text-color-light); }
+.multi-select-dropdown {
+    display: none; position: absolute; top: 100%; left: 0; width: 200px; max-height: 200px;
+    overflow-y: auto; background-color: var(--page-bg-color); border: 1px solid var(--border-color);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 100; border-radius: 4px; padding: 5px 0;
 }
+.multi-select-dropdown.show { display: block; }
+.multi-select-item { display: flex; align-items: center; padding: 8px 12px; cursor: pointer; gap: 10px; }
+.multi-select-item:hover { background-color: var(--table-row-hover); }
+.multi-select-actions {
+    display: flex; justify-content: space-between; padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color); margin-bottom: 5px;
+    font-size: 0.85em; background-color: var(--table-header-bg);
+}
+.btn-link-sm {
+    background: none; border: none; color: var(--link-color);
+    cursor: pointer; padding: 0; font-size: inherit; font-weight: 600;
+}
+.btn-link-sm:hover { text-decoration: underline; color: var(--link-hover-color); }
 
-/* Log Page Styles */
-.log-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+/* =========================================
+   6. Summary Block
+   ========================================= */
+.summary-section {
+    margin-bottom: 20px; background-color: var(--page-bg-color);
+    border: 1px solid var(--border-color); border-radius: 8px;
+    padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
+.summary-grid { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.summary-left { display: flex; gap: 15px; align-items: center; }
+.summary-right { text-align: right; font-size: 0.95em; color: var(--text-color-light); line-height: 1.6; }
+.summary-right strong { color: var(--text-color); }
+.summary-right .domain-text { color: var(--text-color); font-weight: normal; font-style: italic; }
 
-.log-container {
-    background-color: #1e1e1e;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 5px;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 12px;
-    height: 70vh;
-    overflow-y: auto;
-    color: #d4d4d4;
-    white-space: normal;
-    display: flex;
-    flex-direction: column;
+.stat-badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px;
+    border-radius: 6px; background-color: var(--table-expand-bg);
+    border: 1px solid var(--border-color); font-size: 0.9em; font-weight: 600; color: var(--text-color);
 }
+.stat-badge.status-matched { background-color: var(--status-matched-bg); color: #ffffff; border-color: var(--status-matched-bg); }
+.stat-badge.status-mismatch { background-color: var(--status-mismatch-bg); color: #000000; border-color: var(--status-mismatch-bg); }
 
-.log-line {
-    display: block;
+.summary-toggle {
+    display: none;
     width: 100%;
-    padding: 2px 4px;
-    margin: 0;
-    line-height: 1.2;
-    white-space: pre-wrap; 
-    border: none; 
-}
-
-/* Syntax Highlighting Classes */
-.log-error {
-    background-color: #dc3545; 
-    color: #ffffff;
-}
-
-.log-warning {
-    color: #ffc107;
-}
-
-.log-success {
-    color: #28a745;
-}
-
-.styled-link {
-    color: var(--link-color);
-    text-decoration: underline;
-}
-
-.styled-link:hover {
-    color: var(--link-hover-color);
-}
-
-/* Larger Theme Button on Settings Page */
-.large-theme-button {
-    height: auto;
-    width: auto;
-    padding: 8px 15px;
+    
     background-color: var(--button-secondary-bg);
     color: var(--button-secondary-text);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
     border: none;
-    transition: background-color 0.2s;
+    border-radius: 4px;
+    padding: 10px 0;
+    
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 5px;
 }
-.large-theme-button:hover {
+
+.summary-toggle:hover {
     background-color: var(--button-secondary-hover-bg);
 }
-.large-theme-button svg {
-    stroke: currentColor; /* Use button text color for icon */
+
+.summary-section.is-open .summary-toggle {
+    margin-top: 15px;
+    border-top: none;
 }
-/* Mobile Responsive for New Settings */
+
+/* =========================================
+   7. Tables & Status
+   ========================================= */
+.domain-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.domain-table th, .domain-table td {
+    border: 1px solid var(--border-color); padding: 12px 15px;
+    text-align: left; vertical-align: middle; white-space: nowrap;
+}
+.domain-table th { background-color: var(--table-header-bg); font-weight: 600; }
+.domain-table tr.domain-row { cursor: pointer; }
+.domain-table tr.domain-row:hover { background-color: var(--table-row-hover); }
+
+/* Columns Sizing */
+.domain-table th:first-child, .domain-table td:first-child { white-space: normal; }
+.domain-table th:nth-child(4), .domain-table td:nth-child(4) { min-width: 60px; text-align: center; }
+
+/* Header Search Content */
+.th-content-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.header-search-controls { display: flex; align-items: center; gap: 8px; }
+.header-search-controls .search-input { margin: 0; width: 180px; height: 32px; padding: 4px 8px; }
+.header-search-controls .btn-warning { height: 32px; padding: 0 10px; font-size: 13px; }
+
+/* Row Expand Icon */
+.domain-row td:first-child::before {
+    content: '►'; font-size: 0.7em; margin-right: 8px; display: inline-block;
+    transition: transform 0.2s ease-in-out;
+}
+.domain-row.is-open td:first-child::before { transform: rotate(90deg); }
+
+/* Status Badges */
+.status-indicator { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.status-matched { background-color: var(--status-matched-bg); color: var(--status-matched-text); }
+.status-mismatch { background-color: var(--status-mismatch-bg); color: var(--status-mismatch-text); }
+.status-error { background-color: var(--status-error-bg); color: var(--status-error-text); }
+.status-unknown { background-color: var(--status-unknown-bg); color: var(--status-unknown-text); }
+.status-na { background-color: var(--status-unknown-bg); color: var(--status-unknown-text); }
+
+/* Expandable Details */
+.expandable-content { display: none; background-color: var(--table-expand-bg); }
+.expandable-content td { border-top: 1px solid var(--border-color); padding: 15px; white-space: normal; }
+.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+.details-grid strong { color: var(--text-color-light); }
+.action-buttons { margin-top: 15px; }
+
+/* Refresh Icon */
+.refresh-icon {
+    display: inline-block; margin-left: 8px; text-decoration: none;
+    color: var(--link-color); font-size: 1.2em; font-weight: bold; cursor: pointer;
+}
+.refresh-icon:hover { color: var(--link-hover-color); transform: rotate(90deg); transition: transform 0.2s; }
+
+/* Sorting */
+.sort-icon {
+    display: inline-block; border: 1px solid var(--border-color); border-radius: 4px;
+    padding: 2px 6px; margin-left: 8px; cursor: pointer; font-family: monospace;
+    font-weight: bold; min-width: 1.5em; text-align: center; user-select: none;
+}
+.sort-icon:hover { background-color: var(--table-row-hover); border-color: var(--link-color); }
+.sort-icon::after { content: '↕'; color: var(--text-color-light); }
+.sort-icon.asc::after { content: '↑'; color: var(--link-color); }
+.sort-icon.desc::after { content: '↓'; color: var(--link-color); }
+
+/* =========================================
+   8. Settings Page & Logs
+   ========================================= */
+.settings-container { padding: 0 10px; }
+.tabs { border-bottom: 1px solid var(--border-color); margin-bottom: 25px; display: flex; gap: 10px; overflow-x: auto; }
+.tab-link {
+    background: none; border: none; padding: 10px 20px; font-size: 16px;
+    cursor: pointer; color: var(--text-color-light); border-bottom: 3px solid transparent;
+    font-weight: 600; white-space: nowrap;
+}
+.tab-link:hover { color: var(--text-color); }
+.tab-link.active { color: var(--link-color); border-bottom-color: var(--link-color); }
+.tab-content { display: none; animation: fadeEffect 0.2s; }
+.tab-content.active { display: block; }
+@keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 6px; }
+.help-text { font-size: 0.9em; color: var(--text-color-light); margin-bottom: 8px; }
+.mb-15 { margin-bottom: 15px; } .mt-15 { margin-top: 15px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.row-align { display: flex; align-items: center; gap: 10px; }
+
+/* Settings Table */
+.settings-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+.settings-table th {
+    text-align: left; padding: 10px; border-bottom: 2px solid var(--border-color);
+    font-weight: 600; vertical-align: bottom; padding-bottom: 5px;
+}
+.settings-table .sub-header-row th {
+    font-size: 0.85em; font-weight: 500; color: var(--text-color-light);
+    border-bottom: 1px solid var(--border-color); padding-bottom: 10px;
+}
+.settings-table td { padding: 10px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.settings-table .text-center { text-align: center; }
+.btn-icon-danger { background: none; border: none; color: var(--status-error-bg); font-weight: bold; cursor: pointer; font-size: 1.2em; padding: 5px; }
+.btn-icon-danger:hover { color: #a71d2a; transform: scale(1.1); }
+
+/* Webhooks */
+.sub-section { background-color: var(--table-expand-bg); padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+.webhook-row { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; padding: 10px; background-color: var(--table-expand-bg); border-radius: 4px; border: 1px solid var(--border-color); }
+.webhook-controls { min-width: 160px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.webhook-input { flex-grow: 1; }
+.form-actions { margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; text-align: right; }
+
+/* Logs */
+.log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.log-container {
+    background-color: #1e1e1e; border: 1px solid var(--border-color); border-radius: 4px;
+    padding: 5px; font-family: "Courier New", Courier, monospace; font-size: 12px;
+    height: 70vh; overflow-y: auto; color: #d4d4d4; white-space: normal;
+    display: flex; flex-direction: column;
+}
+.log-line { display: block; width: 100%; padding: 2px 4px; margin: 0; line-height: 1.2; white-space: pre-wrap; }
+.log-error { background-color: #dc3545; color: #ffffff; }
+.log-warning { color: #ffc107; }
+.log-success { color: #28a745; }
+.styled-link { color: var(--link-color); text-decoration: underline; }
+:root.dark-mode .styled-link { color: #66b0ff !important; }
+
+/* =========================================
+   9. Utilities & Modals
+   ========================================= */
+.flash { padding: 15px; margin-bottom: 20px; border-radius: 4px; border: 1px solid transparent; }
+.flash.success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.flash.danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+.flash.info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+:root.dark-mode .flash.success { background-color: #1a4a2a; color: #d4edda; border-color: #2a683d; }
+:root.dark-mode .flash.danger { background-color: #5a2c32; color: #f8d7da; border-color: #8a3c46; }
+:root.dark-mode .flash.info { background-color: #1c4a55; color: #d1ecf1; border-color: #2c7a8a; }
+
+#loading-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); z-index: 1000;
+    justify-content: center; align-items: center; text-align: center; color: white;
+}
+#loading-overlay p { font-size: 1.2em; font-weight: bold; }
+
+/* Tooltips */
+.tooltip { position: relative; display: inline-block; cursor: help; margin-left: 5px; color: var(--text-color-light); border-bottom: 1px dotted var(--text-color-light); }
+.tooltip .tooltip-text {
+    visibility: hidden; width: 220px; background-color: #333; color: #fff;
+    text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1000;
+    bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s;
+    font-size: 0.8em; box-shadow: 0 2px 10px rgba(0,0,0,0.2); pointer-events: none;
+}
+.tooltip .tooltip-text::after {
+    content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+    border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent;
+}
+.tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+th:first-child .tooltip .tooltip-text { left: 0; margin-left: 0; }
+th:first-child .tooltip .tooltip-text::after { left: 10%; }
+th:last-child .tooltip .tooltip-text { left: auto; right: 0; margin-left: 0; }
+th:last-child .tooltip .tooltip-text::after { left: auto; right: 10%; }
+
+.provider-status-box { padding: 15px; margin-bottom: 20px; border-radius: 6px; border: 1px solid #ddd; }
+.provider-status-box.ok { background-color: rgba(40, 167, 69, 0.1); border-color: #28a745; color: #155724; }
+.provider-status-box.error { background-color: rgba(220, 53, 69, 0.1); border-color: #dc3545; color: #721c24; }
+
+.mobile-only { display: none !important; }
+.desktop-only { display: inline-flex !important; }
+.mobile-search-bar { display: none; background-color: var(--table-expand-bg); padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 15px; flex-direction: column; gap: 10px; }
+.mobile-search-bar .search-input { width: 100%; margin: 0; }
+.mobile-search-bar .btn-warning { width: 100%; margin-top: 10px; }
+
+/* =========================================
+   10. Mobile Responsive (Consolidated)
+   ========================================= */
 @media (max-width: 768px) {
-    .grid-2 {
-        grid-template-columns: 1fr;
-    }
-    .webhook-row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .webhook-controls {
-        margin-bottom: 5px;
-    }
+    .container { margin: 0; padding: 10px; border: none; box-shadow: none; }
     
-    /* --- Settings Table Mobile --- */
-    .settings-table, .settings-table tbody, .settings-table tr, .settings-table td {
-        display: block;
-        width: 100%;
+    /* Toggle Visibility */
+    .mobile-only { display: flex !important; }
+    .desktop-only { display: none !important; }
+    .mobile-search-bar { display: block; }
+
+    /* Top Bar */
+    .top-bar { flex-direction: column; align-items: stretch; gap: 15px; margin-bottom: 10px; }
+    .top-bar-left { width: 100%; justify-content: space-between; margin-bottom: 15px; }
+    .brand-logo-container { flex-grow: 1; }
+    .mobile-header-icons { display: flex; gap: 15px; align-items: center; }
+    .theme-button { width: 40px; height: 40px; margin: 0; }
+    
+    .top-bar-right { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .top-bar-right .btn, .top-bar-right .actions-dropdown, .top-bar-right .actions-dropdown-button { width: 100%; margin: 0; box-sizing: border-box; }
+    .actions-dropdown-button { display: flex; justify-content: center; width: 100%; }
+
+    /* Settings Page Header (Mobile Specific Overrides) */
+    .top-bar.settings-top-bar {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 10px 15px;
+        gap: 10px;
     }
-    .settings-table tr {
-        margin-bottom: 20px;
-        border: 1px solid var(--border-color);
+
+    .settings-top-bar .top-bar-left {
+        width: auto !important; 
+        margin-bottom: 0 !important;
+    }
+
+    .settings-top-bar .top-bar-right {
+        width: auto !important;
+        display: flex !important;
+        flex-direction: row !important; 
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    /* Summary */
+    .summary-section { padding: 10px; }
+    .summary-grid { flex-direction: column; align-items: stretch; gap: 10px; display: none; }
+    .summary-section.is-open .summary-grid { display: flex; }
+    .summary-toggle { display: block; }
+    .summary-left { flex-wrap: wrap; justify-content: center; }
+    .summary-right { text-align: center; border-top: 1px solid var(--border-color); padding-top: 10px; }
+
+    /* Card Table Layout (Dashboard) */
+    .domain-table thead { display: none; }
+    .domain-table tr.domain-row { display: block; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .domain-table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; text-align: right; border: none; border-bottom: 1px solid var(--border-color); }
+    .domain-table td:last-child { border-bottom: none; }
+    
+    .domain-table td::before { content: attr(data-label); font-weight: bold; text-align: left; padding-right: 15px; color: var(--text-color-light); }
+    
+    .domain-table td:first-child { background-color: var(--table-header-bg); border-radius: 4px 4px 0 0; justify-content: flex-start; gap: 10px; }
+    .domain-table td:first-child::before { display: none; }
+    .domain-table td[data-label="Logs"] { justify-content: center; }
+    .domain-table td[data-label="Logs"]::before { display: none; }
+
+    .mobile-expand-icon { display: inline-block; font-size: 0.8em; color: var(--text-color-light); order: -1; padding-left: 0; padding-right: 5px; transition: transform 0.2s ease-in-out; }
+    .domain-row.is-open .mobile-expand-icon { transform: rotate(90deg); }
+    .domain-row td:first-child::before { display: none; }
+
+    /* Settings Mobile Layout (Consolidated) */
+    .grid-2 { grid-template-columns: 1fr; }
+    .webhook-row { flex-direction: column; align-items: flex-start; }
+    .webhook-controls { margin-bottom: 5px; }
+    
+    .settings-table, .settings-table tbody, .settings-table tr, .settings-table td { display: block; width: 100%; }
+    
+    .settings-table tr { 
+        margin-bottom: 20px; 
+        border: 1px solid var(--border-color); 
         padding: 15px;
-        border-radius: 6px;
-        background-color: var(--bg-color);
-        /* FIX BLEED: Ensure padding is included in width calculation */
-        box-sizing: border-box;
-        width: 100%;
-        max-width: 100%;
+        border-radius: 6px; 
+        background-color: var(--bg-color); 
+        box-sizing: border-box; 
     }
     
-    /* Ensure the container doesn't overflow */
-    .settings-table {
-        width: 100%;
-        box-sizing: border-box;
+    .settings-table td { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        border-bottom: 1px solid var(--border-color); 
+        padding: 12px 0; 
+        gap: 15px; 
     }
-    .settings-table td {
-        border: none;
-        padding: 8px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border-color);
-    }
-    .settings-table td:last-child {
-        border-bottom: none;
-        justify-content: flex-end;
-    }
-    .settings-table thead {
-        display: none;
+    .settings-table td:last-child { border-bottom: none; justify-content: flex-end; }
+    .settings-table thead { display: none; }
+    
+    /* THE LABEL: Strictly limited to 40% width */
+    .settings-table td::before { 
+        content: attr(data-label); 
+        font-weight: 600; 
+        color: var(--text-color); 
+        text-align: left; 
+        flex-shrink: 0; 
+        max-width: 40%; /* Prevent label from growing too wide */
+        white-space: normal; /* Allow label text to wrap if needed */
+        line-height: 1.2;
     }
     
-    /* MAGIC: Show labels on mobile */
-    .settings-table td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--text-color);
+    /* DOMAIN NAME ROW (Exception): Full width, no label */
+    .settings-table td[data-label="Domain Name"]::before { display: none; }
+    .settings-table td[data-label="Domain Name"] .form-control {
+        width: 100% !important;
+        max-width: 100% !important;
         text-align: left;
     }
-    /* Hide label for Domain Name input (it's obvious) */
-    .settings-table td[data-label="Domain Name"]::before {
-        display: none;
+
+    /* THE INPUTS: Strictly limited to 60% width */
+    .settings-table td:not([data-label="Domain Name"]) > .form-control,
+    .settings-table td:not([data-label="Domain Name"]) > .multi-select-container,
+    .settings-table td:not([data-label="Domain Name"]) > select {
+        flex: 1;            
+        width: auto !important; 
+        max-width: 60%;     /* Prevent input from eating the label */
+        min-width: 0;       
+        text-align: right; 
     }
-}
-/* Force readable link color in Dark Mode */
-:root.dark-mode .styled-link {
-    color: #66b0ff !important;
-}
-/* --- Multi-Select Dropdown (Settings) --- */
-.multi-select-container {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-}
+    
+    /* Dropdown Button Alignment */
+    .settings-table td > .multi-select-container .multi-select-btn {
+        justify-content: flex-end; 
+        width: 100%;
+    }
+    /* --- Mobile Tabs (2x2 Grid) --- */
+    .tabs {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr; /* Two equal columns */
+        gap: 10px;
+        overflow-x: visible;
+        border-bottom: none; /* Remove the dividing line */
+    }
 
-.multi-select-btn {
-    width: 100%;
-    padding: 8px;
-    background-color: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: left;
-    font-size: 0.9em;
-    color: var(--text-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    .tab-link {
+        width: 100%;
+        text-align: center;
+        border: 1px solid var(--border-color); /* Add border for "Card" look */
+        border-radius: 6px;
+        background-color: var(--table-expand-bg);
+        margin-bottom: 0;
+        padding: 12px 5px;
+        white-space: normal; /* Allow text to wrap if needed */
+    }
 
-.multi-select-btn::after {
-    content: '▼';
-    font-size: 0.7em;
-    color: var(--text-color-light);
-}
-
-.multi-select-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 200px; /* Wider than button to show text */
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: var(--page-bg-color);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 100;
-    border-radius: 4px;
-    padding: 5px 0;
-}
-
-.multi-select-dropdown.show {
-    display: block;
-}
-
-.multi-select-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    cursor: pointer;
-    gap: 10px;
-}
-
-.multi-select-item:hover {
-    background-color: var(--table-row-hover);
-}
-
-.multi-select-item input {
-    transform: scale(1.2);
-    cursor: pointer;
-}
-
-.multi-select-item span {
-    font-size: 0.9em;
-    user-select: none;
-}
-
-/* Provider Status Box */
-.provider-status-box {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-.provider-status-box.ok {
-    background-color: rgba(40, 167, 69, 0.1);
-    border-color: #28a745;
-    color: #155724;
-}
-.provider-status-box.error {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-color: #dc3545;
-    color: #721c24;
-}
-
-/* --- Multi-Select Actions (Check All/None) --- */
-.multi-select-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 5px;
-    font-size: 0.85em;
-    background-color: var(--table-header-bg);
-}
-
-.btn-link-sm {
-    background: none;
-    border: none;
-    color: var(--link-color);
-    cursor: pointer;
-    padding: 0;
-    font-size: inherit;
-    font-weight: 600;
-}
-.btn-link-sm:hover {
-    text-decoration: underline;
-    color: var(--link-hover-color);
-}
-
-/* Ensure button text truncates with ellipsis (...) */
-.multi-select-btn {
-    display: flex; /* Ensure flex layout for arrow alignment */
-    justify-content: space-between;
-    align-items: center;
-    overflow: hidden; /* Contain text */
-}
-
-.multi-select-btn span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    margin-right: 10px; /* Space for the arrow */
-    flex-grow: 1;
-}
-
-/* --- CSS Tooltips --- */
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: help;
-    margin-left: 5px;
-    color: var(--text-color-light);
-    font-size: 0.85em;
-    font-weight: normal;
-    border-bottom: 1px dotted var(--text-color-light);
-}
-
-.tooltip .tooltip-text {
-    visibility: hidden;
-    width: 220px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 8px;
-    position: absolute;
-    z-index: 1000;
-    bottom: 125%; /* Position above */
-    left: 50%;
-    margin-left: -110px; /* Center it */
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.8em;
-    font-weight: normal;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    line-height: 1.4;
-    pointer-events: none; /* Prevent flickering */
-}
-
-.tooltip .tooltip-text::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #333 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Adjust tooltip for first/last columns to prevent cutoff */
-th:first-child .tooltip .tooltip-text {
-    left: 0;
-    margin-left: 0;
-}
-th:first-child .tooltip .tooltip-text::after {
-    left: 10%;
-}
-th:last-child .tooltip .tooltip-text {
-    left: auto;
-    right: 0;
-    margin-left: 0;
-}
-th:last-child .tooltip .tooltip-text::after {
-    left: auto;
-    right: 10%;
-}
-/* --- Brand Logo & Theme Switching --- */
-.brand-logo-container {
-    display: flex;
-    align-items: center;
-    padding: 5px 0;
-}
-
-.brand-logo {
-    height: 40px; /* Adjust height as needed depending on navbar size */
-    width: auto;
-    transition: opacity 0.3s ease;
-}
-
-/* Default: Hide dark mode logo, show light mode logo */
-.dark-mode-logo {
-    display: none;
-}
-.light-mode-logo {
-    display: block;
-}
-
-/* When Dark Mode is active: Hide light logo, show dark logo */
-html.dark-mode .light-mode-logo {
-    display: none;
-}
-html.dark-mode .dark-mode-logo {
-    display: block;
+    /* Highlight the active tab nicely on mobile */
+    .tab-link.active {
+        background-color: var(--link-color);
+        color: #ffffff;
+        border-color: var(--link-color);
+    }
 }

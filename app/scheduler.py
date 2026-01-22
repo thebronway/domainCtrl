@@ -12,11 +12,12 @@ from dateutil.relativedelta import relativedelta
 from app.app import app, config
 from app.services import (
     PublicIPService,
-    Route53Service,
     CertbotService,
     NotificationService,
     CertificateMonitor
 )
+# --- Import the Factory ---
+from app.providers import get_provider
 
 logger = logging.getLogger(__name__)
 
@@ -35,13 +36,13 @@ app_state = {
 # --- Service Initialization ---
 
 ip_service = None
-r53_service = None
+dns_provider = None # Generic DNS Provider (was r53_service)
 cert_service = None
 cert_monitor = None
 provider_error = None  # Global error state for Dashboard UI
 
 def initialize_services():
-    global ip_service, r53_service, cert_service, cert_monitor, provider_error
+    global ip_service, dns_provider, cert_service, cert_monitor, provider_error
     
     # Reset error state
     provider_error = None
@@ -51,42 +52,35 @@ def initialize_services():
         logger.info("Initializing services in DEMO MODE.")
         return
 
-    # 2. Validate Provider
-    provider = config.provider
-    if not provider:
+    # 2. Validate Provider Variable
+    if not config.provider:
         provider_error = "Missing PROVIDER environment variable. Please set PROVIDER (e.g., 'Route53')."
         logger.error(provider_error)
         return
 
-    # 3. Initialize Specific Provider
+    # 3. Initialize Specific Provider via Factory
     try:
-        if provider == 'route53':
-            logger.info("Initializing Route53 Service...")
-            # We create a temporary instance to test credentials immediately
-            r53_service = Route53Service()
-            
-        else:
-            provider_error = f"Unsupported or unknown PROVIDER: '{provider}'"
-            logger.error(provider_error)
-            return
-
-        # 4. Initialize Common Services (Only if provider init succeeded)
+        logger.info(f"Initializing DNS Provider: {config.provider}...")
+        dns_provider = get_provider() # <--- Factory Call
+        
+        # 4. Initialize Common Services
         ip_service = PublicIPService()
         cert_service = CertbotService()
         cert_monitor = CertificateMonitor()
+        
+        logger.info("All services initialized successfully.")
 
     except Exception as e:
-        # Catch specific credential errors passed up from the Service class
+        # Catch specific credential errors passed up from the Provider
         provider_error = f"Provider Initialization Failed: {str(e)}"
         logger.error(provider_error)
         # Prevent broken services from running
-        r53_service = None
+        dns_provider = None
 
 # Run initialization immediately on import
 initialize_services()
 
 # NotificationService is initialized in both modes
-# so the "Send Test Notification" button can work.
 notify_service = NotificationService()
 
 # --- State Persistence ---
@@ -95,7 +89,6 @@ def load_state():
     """Loads the app_state from a JSON file on startup."""
     global app_state
     
-    # --- Skip loading state in demo mode ---
     if config.demo_mode:
         logger.info("Demo Mode: Skipping state load.")
         return
@@ -121,15 +114,10 @@ def load_state():
                 if state.get("ssl_last_renew"):
                     state["ssl_last_renew"] = datetime.fromisoformat(state["ssl_last_renew"])
             
-            # --- CHANGE START: Preserve provider_error ---
-            # We don't want to overwrite the current runtime error (if any) with old data from disk
+            # Preserve runtime error if it exists
             current_error = provider_error
-
             app_state.update(loaded_state)
-            
-            # Re-apply the current runtime error status
             app_state['provider_error'] = current_error
-            # --- CHANGE END ---
 
             logger.info("Successfully loaded previous state from disk.")
                 
@@ -146,7 +134,6 @@ def save_state():
     """Saves the current app_state to a JSON file."""
     global app_state
     
-    # --- Skip saving state in demo mode ---
     if config.demo_mode:
         return
     
@@ -171,7 +158,8 @@ def save_state():
         except Exception as e:
             logger.error(f"Error saving state file: {e}")
 
-# --- Helper Function ---
+# --- Helper Functions ---
+
 def get_user_timezone():
     """Gets the pytz timezone object from config."""
     try:
@@ -186,17 +174,19 @@ def get_current_time_in_tz():
     tz = get_user_timezone()
     return datetime.now(tz)
 
-def get_utc_time_for_local_string(time_str):
-    """Converts a local time string (e.g., '02:30') to a UTC string."""
-    tz = get_user_timezone()
-    now_in_tz = datetime.now(tz)
+def get_system_time_for_user_time(time_str):
+    """Converts a user-configured time string to the server's local system time string."""
+    # 1. Get User's configured target time
+    user_tz = get_user_timezone()
+    now_user = datetime.now(user_tz)
     
     target_time = datetime.strptime(time_str, '%H:%M').time()
-    target_dt_local = now_in_tz.replace(hour=target_time.hour, minute=target_time.minute, second=0, microsecond=0)
+    target_dt_user = now_user.replace(hour=target_time.hour, minute=target_time.minute, second=0, microsecond=0)
 
-    target_dt_utc = target_dt_local.astimezone(pytz.utc)
+    # 2. Convert to the System's Local Time (whatever the Docker container is using)
+    target_dt_system = target_dt_user.astimezone(None)
     
-    return target_dt_utc.strftime('%H:%M')
+    return target_dt_system.strftime('%H:%M')
 
 # --- Core Job Functions ---
 
@@ -209,6 +199,7 @@ def run_ddns_update():
         
         global_notifications_enabled = config.get('notifications', {}).get('enabled', False)
         
+        # 1. Get Public IP
         new_public_ip = ip_service.get_public_ip()
         app_state["last_ip_check_time"] = get_current_time_in_tz()
         
@@ -230,6 +221,7 @@ def run_ddns_update():
         else:
             logger.info(f"Public IP ({new_public_ip}) has not changed.")
 
+        # 2. Check each domain against the Provider
         for domain_config in config.get_domains():
             domain_name = domain_config['name']
             
@@ -239,7 +231,8 @@ def run_ddns_update():
             if not domain_config.get('ddns', False):
                 continue
                 
-            recorded_ip = r53_service.get_a_record_ip(domain_name)
+            # --- GENERIC CALL ---
+            recorded_ip = dns_provider.get_record_ip(domain_name)
             app_state['domain_states'][domain_name]['recorded_ip'] = recorded_ip
             
             app_state['domain_states'][domain_name]['last_update_time'] = get_current_time_in_tz()
@@ -257,7 +250,9 @@ def run_ddns_update():
                 
                 if auto_update_enabled:
                     logger.info(f"[{domain_name}] Auto-update enabled. Updating...")
-                    success = r53_service.update_a_record_ip(domain_name, new_public_ip)
+                    
+                    # --- GENERIC CALL ---
+                    success = dns_provider.update_record_ip(domain_name, new_public_ip)
                     
                     if success:
                         logger.info(f"[{domain_name}] Successfully updated to {new_public_ip}")
@@ -271,12 +266,12 @@ def run_ddns_update():
                                 f"Old IP: {recorded_ip or 'N/A'}"
                             )
                     else:
-                        logger.error(f"[{domain_name}] Failed to update in Route 53.")
+                        logger.error(f"[{domain_name}] Failed to update via Provider.")
                         if send_alerts:
                             notify_service.send_notification(
                                 f"DDNS IP Update FAILED for {domain_name}",
                                 f"The IP address update for {domain_name} failed. "
-                                f"Please check the application logs and IAM permissions."
+                                f"Please check the application logs."
                             )
                 else:
                     logger.info(f"[{domain_name}] Auto-update is disabled. IP was not updated.")
@@ -305,6 +300,10 @@ def _run_ssl_check_thread():
         domains = config.get_domains()
         total_domains = len(domains)
         
+        # --- GENERIC CALL ---
+        # Get flags for the current provider (e.g., --dns-route53)
+        certbot_flags = dns_provider.get_certbot_flags()
+
         for i, domain_config in enumerate(domains):
             # Check if SSL is enabled for this domain
             if not domain_config.get('ssl', {}).get('enabled'):
@@ -321,7 +320,9 @@ def _run_ssl_check_thread():
                 logger.info(f"[{domain_name}] Skipping renewal check, certificate is missing.")
             else:
                 logger.info(f"[{domain_name}] Checking for SSL renewal (Auto-update: {auto_update_enabled})...")
-                success, output = cert_service.run_renewal_check(domain_name, auto_update_enabled)
+                
+                # --- GENERIC CALL ---
+                success, output = cert_service.run_renewal_check(domain_name, auto_update_enabled, certbot_flags)
             
                 if not success:
                     logger.error(f"[{domain_name}] Certbot renewal check FAILED. Output: {output}")
@@ -451,7 +452,6 @@ def run_initial_setup():
     with app.app_context():
         load_state()
         
-        # --- Skip in demo mode ---
         if config.demo_mode:
             logger.info("Demo Mode: Skipping initial setup.")
             return
@@ -490,17 +490,17 @@ def register_jobs(run_first_check=False):
     
     if cert_cfg.get('enabled', True):
         check_time_str = cert_cfg.get('check_time', '02:30')
-        ssl_utc_time = get_utc_time_for_local_string(check_time_str)
-        schedule.every().day.at(ssl_utc_time).do(run_ssl_check)
+        system_run_time = get_system_time_for_user_time(check_time_str)
+        schedule.every().day.at(system_run_time).do(run_ssl_check)
         
         tz = get_user_timezone()
-        logger.info(f"Scheduler: SSL Check scheduled for {ssl_utc_time} UTC. (Target {check_time_str} {tz})")
+        logger.info(f"Scheduler: SSL Check scheduled for {system_run_time} System Time. (Target {check_time_str} {tz})")
     else:
         logger.info("Scheduler: SSL Check is GLOBALLY DISABLED.")
     
     # 2. Log Cleanup
-    log_utc_time = get_utc_time_for_local_string("03:30")
-    schedule.every().day.at(log_utc_time).do(run_log_cleanup)
+    log_sys_time = get_system_time_for_user_time("03:30")
+    schedule.every().day.at(log_sys_time).do(run_log_cleanup)
     
     # 3. IP Check
     interval_str = config.get('ip_check_interval', '5m')
@@ -519,8 +519,8 @@ def register_jobs(run_first_check=False):
         schedule.every().hour.at(":00").do(run_ddns_update)
         log_msg = "every hour"
     elif interval_str == '24h':
-        ip_utc_time = get_utc_time_for_local_string("00:00")
-        schedule.every().day.at(ip_utc_time).do(run_ddns_update)
+        ip_sys_time = get_system_time_for_user_time("00:00")
+        schedule.every().day.at(ip_sys_time).do(run_ddns_update)
         log_msg = f"daily at 00:00 local"
     elif interval_str == 'disabled':
         log_msg = "disabled"
@@ -581,10 +581,9 @@ def run_scheduler():
 def start_scheduler():
     """Starts the scheduler in a non-blocking daemon thread."""
     
-    # --- Skip in demo mode ---
     if config.demo_mode:
         logger.info("Demo Mode: Skipping scheduler thread start.")
-        return # Do not start the thread
+        return 
 
     logger.info("Starting background scheduler thread...")
     scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)

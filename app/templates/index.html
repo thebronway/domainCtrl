@@ -22,40 +22,40 @@
                 <img src="{{ url_for('static', filename='images/domainCtrl-logo-lightmode.png') }}" alt="domainCtrl" class="brand-logo light-mode-logo" style="height: 40px; width: auto;">
                 <img src="{{ url_for('static', filename='images/domainCtrl-logo-darkmode.png') }}" alt="domainCtrl" class="brand-logo dark-mode-logo" style="height: 40px; width: auto;">
             </div>
-        </div>
-        <div class="top-bar-right">
-            
-            <button id="global-reset-btn" class="btn btn-success" style="display: none; align-items: center; gap: 5px;" onclick="resetTableState()">
-                <svg width="14" height="14" style="stroke: white;"><use href="#icon-refresh"></use></svg>
-                Reset Table
-            </button>
 
+            <div class="mobile-header-icons mobile-only">
+                <a href="{{ url_for('settings') }}" class="theme-button" title="Settings">
+                    <svg width="20" height="20"><use href="#icon-settings"></use></svg>
+                </a>
+                <button class="theme-button theme-toggle-btn" title="Toggle dark/light mode"></button>
+            </div>
+        </div>
+
+        <div class="top-bar-right">
             <a href="{{ url_for('view_all_logs') }}" class="btn btn-secondary">View All Logs</a>
 
             <div class="actions-dropdown" id="bulk-actions-dropdown">
                 <button class="actions-dropdown-button" id="bulk-actions-btn" {{ 'disabled' if demo_mode }}>Bulk Actions ▼</button>
                 <div class="actions-dropdown-content" id="bulk-actions-content">
-                    <form action="{{ url_for('trigger_ddns') }}" method="POST">
+                    <form action="{{ url_for('trigger_ddns') }}" method="POST" onsubmit="return confirm('Are you sure you want to force a check and update for ALL IPs?');">
                         <button type="submit">Check & Update All IPs</button>
                     </form>
-                    <form action="{{ url_for('trigger_ssl') }}" method="POST">
+                    <form action="{{ url_for('trigger_ssl') }}" method="POST" onsubmit="return confirm('Are you sure you want to force a check and renewal for ALL certificates?');">
                         <button type="submit">Check & Renew All Certs</button>
                     </form>
                 </div>
             </div>
             
-            <a href="{{ url_for('settings') }}" class="theme-button" title="Settings">
+            <button class="theme-button theme-toggle-btn desktop-only" title="Toggle dark/light mode"></button>
+            
+            <a href="{{ url_for('settings') }}" class="theme-button desktop-only" title="Settings">
                 <svg width="20" height="20"><use href="#icon-settings"></use></svg>
             </a>
-
-            <button id="theme-toggle" class="theme-button" title="Toggle dark/light mode"></button>
-            
         </div>
     </div>
 
     <div class="summary-section" id="summary-block">
         <div class="summary-grid">
-            
             <div class="summary-left">
                 {% if summary.ip_total_enabled > 0 %}
                     {% if summary.ip_synced == summary.ip_total_enabled %}
@@ -79,49 +79,45 @@
                 <div><strong>Next SSL Check:</strong> {{ next_ssl_run }}</div>
 
                 {% if summary.next_cert_domain %}
-                <div style="margin-top: 5px; font-size: 0.9em; color: var(--text-color-light);">
-                    Next SSL Cert Expiration: <strong>{{ summary.next_cert_domain }}</strong> on {{ summary.next_cert_date.strftime('%Y-%m-%d') }}
+                <div>
+                    <strong>Next SSL Cert Expiration:</strong> 
+                    <span class="domain-text">{{ summary.next_cert_domain }}</span> 
+                    on {{ summary.next_cert_date.strftime('%Y-%m-%d') }}
                 </div>
                 {% endif %}
 
-                <div style="margin-top: 5px; font-size: 0.9em; color: var(--text-color);">
+                <div>
                     <strong>Current Public IP:</strong> {{ app_state.public_ip or 'Unknown' }}
                 </div>
             </div>
         </div>
-        
         <button class="summary-toggle" onclick="toggleSummary()" id="summary-toggle-btn">Show Summary ▼</button>
     </div>
 
-    <script>
-        function toggleSummary() {
-            const block = document.getElementById('summary-block');
-            const btn = document.getElementById('summary-toggle-btn');
-            block.classList.toggle('is-open');
-            if (block.classList.contains('is-open')) {
-                btn.innerText = "Hide Summary ▲";
-            } else {
-                btn.innerText = "Show Summary ▼";
-            }
-        }
-
-        function showLoadingOverlay(isDemo) {
-            if (isDemo) return;
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-
-        function resetTableState() {
-            // Clear any sort state saved in local storage (implemented in app.js)
-            localStorage.removeItem('domainTableSort');
-            // Reload page to reset view
-            window.location.href = "{{ url_for('index') }}";
-        }
-    </script>
+    <div class="mobile-search-bar mobile-only">
+        <input type="text" class="search-input domain-filter-input" placeholder="Filter domains..." onkeyup="filterDomains(this)">
+        <button class="btn btn-warning reset-btn" style="display: none; align-items: center; gap: 5px; justify-content: center;" onclick="resetTableState()">
+            <svg width="14" height="14" style="stroke: black;"><use href="#icon-refresh"></use></svg>
+            Reset
+        </button>
+    </div>
 
     <table class="domain-table">
         <thead>
             <tr>
-                <th style="width: 80%;">Domain Name <span class="sort-icon" data-sort-key="domain-name"></span></th>
+                <th style="width: 100%;">
+                    <div class="th-content-wrapper">
+                        <span class="th-title">Domain Name <span class="sort-icon" data-sort-key="domain-name"></span></span>
+                        
+                        <div class="header-search-controls">
+                             <input type="text" class="search-input domain-filter-input" placeholder="Filter domains..." onkeyup="filterDomains(this)">
+                             <button class="btn btn-warning reset-btn" style="display: none; align-items: center; gap: 5px; justify-content: center;" onclick="resetTableState()">
+                                <svg width="14" height="14" style="stroke: black;"><use href="#icon-refresh"></use></svg>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </th>
                 <th>DDNS Status <span class="sort-icon" data-sort-key="ddns-status"></span></th>
                 {% if ssl_enabled %}
                 <th>SSL Expiration <span class="sort-icon" data-sort-key="ssl-expire"></span></th>
@@ -256,4 +252,79 @@
             {% endif %}
         </tbody>
     </table>
+
+    <script>
+        function toggleSummary() {
+            const block = document.getElementById('summary-block');
+            const btn = document.getElementById('summary-toggle-btn');
+            block.classList.toggle('is-open');
+            if (block.classList.contains('is-open')) {
+                btn.innerText = "Hide Summary ▲";
+            } else {
+                btn.innerText = "Show Summary ▼";
+            }
+        }
+
+        function showLoadingOverlay(isDemo) {
+            if (isDemo) return;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+
+        function resetTableState() {
+            // 1. Clear Sort (LocalStorage)
+            localStorage.removeItem('domainTableSort');
+            
+            // 2. Clear All Search Inputs (Mobile & Desktop)
+            document.querySelectorAll('.domain-filter-input').forEach(input => {
+                input.value = '';
+            });
+
+            // 3. Reload page to reset view completely
+            window.location.href = "{{ url_for('index') }}";
+        }
+
+        function filterDomains(sourceInput) {
+            // Get value from the input that triggered the event
+            // OR find the first non-empty input if called manually
+            let filter = '';
+            if (sourceInput) {
+                filter = sourceInput.value.toLowerCase();
+                // Sync to other input
+                document.querySelectorAll('.domain-filter-input').forEach(input => {
+                    if (input !== sourceInput) input.value = sourceInput.value;
+                });
+            } else {
+                // If called without event (e.g. on load), grab value from first input
+                const first = document.querySelector('.domain-filter-input');
+                if (first) filter = first.value.toLowerCase();
+            }
+
+            const rows = document.querySelectorAll('.domain-row');
+            // Select ALL reset buttons
+            const resetBtns = document.querySelectorAll('.reset-btn');
+
+            let hasVisibleRows = false;
+
+            rows.forEach(row => {
+                const domainName = row.querySelector('td:nth-child(1) strong').innerText.toLowerCase();
+                const detailsRowId = row.getAttribute('data-target');
+                const detailsRow = document.querySelector(detailsRowId);
+
+                if (domainName.includes(filter)) {
+                    row.style.display = ""; 
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = "none";
+                    if (detailsRow) detailsRow.style.display = "none";
+                    row.classList.remove('is-open');
+                }
+            });
+
+            // Toggle Reset Button Visibility
+            const shouldShow = (filter.length > 0 || localStorage.getItem('domainTableSort'));
+            resetBtns.forEach(btn => {
+                btn.style.display = shouldShow ? 'inline-flex' : 'none';
+            });
+        }
+    </script>
 {% endblock %}
