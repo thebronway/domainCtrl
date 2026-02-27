@@ -25,6 +25,7 @@ This document tracks planned improvements, enhancements, and technical debt for 
 * **CSS Organization**
   * **Goal:** Refactor and split the monolithic stylesheet into modular, manageable chunks.
   * **Value:** Pays down UI technical debt before adding more complex views.
+* **Add AI usage declration**
 
 ### Release v0.8.0: Cert Management Updates and Refinements (Feature Release)
 * **Force SSL Renewal Button**
