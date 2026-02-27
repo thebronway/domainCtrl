@@ -1,6 +1,8 @@
 # domainCtrl
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-v0.6.5-blue.svg)
+![Docker](https://img.shields.io/docker/pulls/thebronway/domainctrl?logo=docker)
 
 ### A Self-Hosted, Automated DDNS & SSL Certificate Manager.
 
@@ -10,9 +12,8 @@
 
 > **Note:** domainCtrl currently only supports AWS Route 53 (more providers coming soon).
 
-### Try it yourself: **[Live Demo](https://domainctrl-demo.conway.im/)**
+## Try it yourself: **[Live Demo](https://domainctrl-demo.conway.im/)**
 
-**Current Version:** `v0.65`  
 **GitHub:** [thebronway/domainCtrl](https://github.com/thebronway/domainCtrl)  
 **Docker Hub:** [thebronway/domainctrl](https://hub.docker.com/r/thebronway/domainctrl)
 
@@ -122,3 +123,8 @@ Secrets for notifications can be configured in the Settings UI or passed as envi
 | `MSTEAMS_WEBHOOK_URL` | Microsoft Teams Webhook URL. |
 | `PUSHOVER_URL` | Apprise-format Pushover URL. |
 | `GCHAT_WEBHOOK_URL` | Google Chat Webhook URL. |
+
+---
+
+### Author
+Check out my other projects at [brian.conway.im](https://brian.conway.im/).
