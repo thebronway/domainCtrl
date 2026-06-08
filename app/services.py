@@ -220,7 +220,8 @@ class CertbotService:
         except subprocess.CalledProcessError as e:
             return False, e.stderr
 
-    def create_certificate(self, domain_name, is_wildcard):
+    def create_certificate(self, domain_name, is_wildcard, dns_flags):
+        # Ensure these lines are indented!
         domain_arg = f"-d {domain_name}"
         if is_wildcard:
             domain_arg += f" -d *.{domain_name}"
@@ -233,18 +234,19 @@ class CertbotService:
 
         command = (
             f"certbot certonly --config-dir {config_dir} --work-dir {config_dir} --logs-dir {config_dir} "
-            f"--dns-route53 --agree-tos --email {email} --no-eff-email --non-interactive {domain_arg}"
+            f"{dns_flags} --agree-tos --email {email} --no-eff-email --non-interactive {domain_arg}"
         )
         return self._run_command(command)
 
-    def run_renewal_check(self, domain_name, auto_update_enabled):
+    def run_renewal_check(self, domain_name, auto_update_enabled, dns_flags):
+        # Ensure these lines are indented!
         dry_run_flag = "" if auto_update_enabled else "--dry-run"
         config_dir = f"/certs/{domain_name}"
         os.makedirs(config_dir, exist_ok=True)
         
         command = (
             f"certbot renew --config-dir {config_dir} --work-dir {config_dir} --logs-dir {config_dir} "
-            f"--dns-route53 {dry_run_flag}"
+            f"{dns_flags} {dry_run_flag}"
         )
         return self._run_command(command)
 
