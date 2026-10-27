@@ -1,7 +1,7 @@
 # domainCtrl
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-v0.6.5-blue.svg)
+![Version](https://img.shields.io/badge/version-v0.6.7-blue.svg)
 ![Docker](https://img.shields.io/docker/pulls/thebronway/domainctrl?logo=docker)
 
 ### A Self-Hosted, Automated DDNS & SSL Certificate Manager.
